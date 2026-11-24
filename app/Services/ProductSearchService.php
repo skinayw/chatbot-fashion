@@ -52,7 +52,7 @@ class ProductSearchService
 
         $scored = $products->map(fn ($p) => ['product' => $p, 'score' => $this->score($p, $words)]);
         $top = $scored->max('score') ?? 0;
-        $min = max(1, (int) ceil($top / 2));
+        $min = max(1, (int) ceil($top / 2));  
 
         return $scored
             ->where('score', '>=', $min)
