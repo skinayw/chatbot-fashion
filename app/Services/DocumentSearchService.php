@@ -12,13 +12,19 @@ class DocumentSearchService
         'cara', 'membuat', 'buat', 'tentang', 'info', 'informasi',
     ];
 
-    // Kata dasar dan bentuk imbuhannya, karena pencarian ini belum punya stemming
+    // Kata yang sering dipakai pelanggan dan padanannya di dokumen (belum ada stemming)
     private array $sinonim = [
-        'tukar'  => ['penukaran', 'menukar', 'ditukar'],
-        'kirim'  => ['pengiriman', 'dikirim', 'ekspedisi'],
-        'ongkir' => ['biaya pengiriman'],
-        'retur'  => ['pengembalian', 'penukaran'],
-        'cuci'   => ['dicuci'],
+        'tukar'       => ['penukaran', 'menukar', 'ditukar'],
+        'kirim'       => ['pengiriman', 'dikirim', 'ekspedisi'],
+        'ongkir'      => ['biaya pengiriman'],
+        'retur'       => ['pengembalian', 'penukaran'],
+        'cuci'        => ['dicuci'],
+        'buka'        => ['jam layanan'],
+        'tutup'       => ['jam layanan'],
+        'operasional' => ['jam layanan'],
+        'admin'       => ['layanan pelanggan'],
+        'kontak'      => ['whatsapp', 'email'],
+        'hubungi'     => ['whatsapp', 'email'],
     ];
 
     // Cari potongan paling relevan dari semua file JSON di storage/app/knowledge
@@ -63,8 +69,6 @@ class DocumentSearchService
         return array_values(array_unique($kata));
     }
 
-    // Satu kata yang ketemu = 2 poin, ditambah 1 poin per kemunculan (maksimal 3)
-    // Mengembalikan [skor, jumlah kata kunci yang cocok]
     private function hitungSkor(string $teks, array $kataKunci): array
     {
         $skor = 0;
