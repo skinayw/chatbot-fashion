@@ -13,6 +13,33 @@ use App\Services\DocumentSearchService;
 
 class ChatController extends Controller
 {
+    // Ambil riwayat percakapan berdasarkan uuid (dipakai frontend saat halaman dibuka ulang)
+    public function show(string $uuid)
+    {
+        if (! Str::isUuid($uuid)) {
+            return response()->json(['message' => 'Percakapan tidak ditemukan.'], 404);
+        }
+
+        $conversation = Conversation::where('uuid', $uuid)->first();
+
+        if (! $conversation) {
+            return response()->json(['message' => 'Percakapan tidak ditemukan.'], 404);
+        }
+
+        // Maksimal 50 pesan terakhir, urut dari yang paling lama
+        $messages = $conversation->messages()
+            ->latest('id')
+            ->take(50)
+            ->get(['role', 'content'])
+            ->reverse()
+            ->values()
+            ->map(fn ($m) => ['role' => $m->role, 'content' => $m->content]);
+
+        return response()->json([
+            'conversation_id' => $conversation->uuid,
+            'messages' => $messages,
+        ]);
+    }
     public function send(Request $request, AiService $ai, ProductSearchService $search, DocumentSearchService $dokumen)
     {
         $data = $request->validate([
